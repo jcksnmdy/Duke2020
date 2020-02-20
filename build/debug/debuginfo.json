@@ -1,0 +1,9 @@
+[
+  {
+    "artifact": "frcJava (in project Toasted)",
+    "target": "roborio",
+    "debugfile": "frcJava_roborio.debugconfig",
+    "project": "Toasted",
+    "language": "java"
+  }
+]
