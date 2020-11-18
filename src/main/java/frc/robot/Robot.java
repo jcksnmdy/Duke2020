@@ -57,7 +57,6 @@ public class Robot extends TimedRobot {
     boolean m_target = m_stick.getRawButton(4);
     double tx = m_limelight.getEntry("tx").getDouble(0);
 		double ty = m_limelight.getEntry("ty").getDouble(0);
-
 		double driveAdjust = ty * 0.2;
 		double aimAdjust = tx * 55;
 		m_rightCommand += driveAdjust - aimAdjust;
