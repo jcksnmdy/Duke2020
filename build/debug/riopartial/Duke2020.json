@@ -1,12 +1,5 @@
 [
   {
-    "artifact": "frcJava (in project Toasted)",
-    "target": "roborio",
-    "debugfile": "frcJava_roborio.debugconfig",
-    "project": "Toasted",
-    "language": "java"
-  },
-  {
     "artifact": "frcJava (in project Duke2020)",
     "target": "roborio",
     "debugfile": "frcJava_roborio.debugconfig",
