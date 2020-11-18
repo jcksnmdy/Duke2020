@@ -56,13 +56,18 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     boolean m_target = m_stick.getRawButton(4);
     double tx = m_limelight.getEntry("tx").getDouble(0);
-		double ty = m_limelight.getEntry("ty").getDouble(0);
+    double ty = m_limelight.getEntry("ty").getDouble(0);
+    double tv = m_limelight.getEntry("tv").getDouble(0);
 		double driveAdjust = ty * 0.2;
 		double aimAdjust = tx * 55;
-		m_rightCommand += driveAdjust - aimAdjust;
-		m_leftCommand += driveAdjust + aimAdjust;
-    if (m_target) {
-      m_myRobot.tankDrive(m_leftCommand, m_rightCommand);
+		m_rightCommand += 0.2*driveAdjust - aimAdjust;
+    m_leftCommand += 0.2*driveAdjust + aimAdjust;
+    
+    if (m_target && tv == 1) {
+      // m_myRobot.tankDrive(m_leftCommand, m_rightCommand);
+      m_myRobot.arcadeDrive(0.3, m_leftCommand);
+    } else {
+      m_myRobot.tankDrive(-0.3, 0.3);
     }
 		
     // boolean m_shootLow = m_stick.getRawButton(7);
