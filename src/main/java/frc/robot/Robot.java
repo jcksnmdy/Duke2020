@@ -31,7 +31,6 @@ public class Robot extends TimedRobot {
   private Joystick m_stick;
   public Talon m_front_left, m_front_right, m_back_left, m_back_right, m_leftShoot, m_rightShoot, m_kick;
   public SpeedController left_motors, right_motors;
-  private JoystickButton m_circle;
 
   @Override
   public void robotInit() {
@@ -55,6 +54,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    boolean m_target = m_stick.getRawButton(4);
     double tx = m_limelight.getEntry("tx").getDouble(0);
 		double ty = m_limelight.getEntry("ty").getDouble(0);
 
@@ -62,8 +62,10 @@ public class Robot extends TimedRobot {
 		double aimAdjust = tx * 55;
 		m_rightCommand += driveAdjust - aimAdjust;
 		m_leftCommand += driveAdjust + aimAdjust;
-
-		m_myRobot.tankDrive(m_leftCommand, m_rightCommand);
+    if (m_target) {
+      m_myRobot.tankDrive(m_leftCommand, m_rightCommand);
+    }
+		
     // boolean m_shootLow = m_stick.getRawButton(7);
     // boolean m_shootMed1 = m_stick.getRawButton(8);
     // boolean m_shootMed2 = m_stick.getRawButton(5);
