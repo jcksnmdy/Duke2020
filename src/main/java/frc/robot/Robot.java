@@ -13,9 +13,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Talon;
+// import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+// import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 
 public class Robot extends TimedRobot {
@@ -34,17 +37,17 @@ public class Robot extends TimedRobot {
   private Joystick m_stick;
 
   // MOTOR CONTROLLERS
-  public Talon m_front_left, m_front_right, m_back_left, m_back_right, m_leftShoot, m_rightShoot, m_kick;
+  public WPI_TalonSRX m_front_left, m_front_right, m_back_left, m_back_right, m_leftShoot, m_rightShoot, m_kick;
   public SpeedController left_motors, right_motors; // GROUPING SIDES OF ROBOT
 
   @Override
   public void robotInit() {
 
     // INITIALIZING THE DRIVE TRAIN
-    m_front_left = new Talon(2); // Front left motor on index 2...
-    m_back_left = new Talon(3); // Back left motor on index 3...
-    m_front_right = new Talon(0);
-    m_back_right = new Talon(1);
+    m_front_left = new WPI_TalonSRX(1); // Front left motor on index 1...
+    m_back_left = new WPI_TalonSRX(2); // Back left motor on index 2...
+    m_front_right = new WPI_TalonSRX(3);
+    m_back_right = new WPI_TalonSRX(4);
 
     // DUKES SHOOTER
     // m_leftShoot = new Talon(4);
@@ -59,12 +62,7 @@ public class Robot extends TimedRobot {
 
     // JOYSTICK AT INDEX 0
     m_stick = new Joystick(0);
-    
-    // WHERE TO GET THE VALUES OF THE LIMELIGHT FROM
-    m_limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    // OUR UNIQUE PIPELINE WITH THE RIGHT SETTINGS: 2
-		m_pipeline = m_limelight.getEntry("pipeline");
-    m_pipeline.setNumber(2);
+
     // START WITH NO VISION ADJUSTMENT
 		m_rightCommand = 0.0;
 		m_leftCommand = 0.0;
@@ -72,8 +70,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    // START TRACKING BUTTON: SQUARE?
-    boolean m_target = m_stick.getRawButton(4);
+    // WHERE TO GET THE VALUES OF THE LIMELIGHT FROM
+    m_limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    // OUR UNIQUE PIPELINE WITH THE RIGHT SETTINGS: 2
+		m_pipeline = m_limelight.getEntry("pipeline");
+    m_pipeline.setNumber(2);
+
+    // START TRACKING BUTTON: X?
+    boolean m_target = m_stick.getRawButton(2);
     // THE DISTANCE FROM THE CROSSHAIR OF THE CENTER OF THE TARGET: X
     double tx = m_limelight.getEntry("tx").getDouble(0);
     // THE DISTANCE FROM THE CROSSHAIR OF THE CENTER OF THE TARGET: Y
@@ -81,23 +85,31 @@ public class Robot extends TimedRobot {
     // BOLLEAN, 0 or 1, IF THE LIMELIHGT SEES A TARGET
     double tv = m_limelight.getEntry("tv").getDouble(0);
 
+    // Post to smart dashboard
+    SmartDashboard.putNumber("Limelight X", tx);
+    SmartDashboard.putNumber("Limelight Y", ty);
+    SmartDashboard.putNumber("Limelight Target", tv);
+    SmartDashboard.putBoolean("Target Target", m_target);
+
     // USING ARCADE DRIVE
-		double driveAdjust = ty * 0.2; // FORWARD BACKWARD
-    double aimAdjust = tx * 55; // TURNING
-    
-    // USING TANK DRIVE
+		double driveAdjust = ty * -0.04; // FORWARD BACKWARD
+    double aimAdjust = tx * -0.04; // TURNING
+    SmartDashboard.putNumber("aimAdjust", aimAdjust);
+
+    // // USING TANK DRIVE
 		// m_rightCommand += 0.2*driveAdjust - aimAdjust;
     // m_leftCommand += 0.2*driveAdjust + aimAdjust;
-    
-    if (m_target && tv == 1) { // CHECK FOR TARGETS AND TARGET BUTTON PUSHED
-      // m_myRobot.tankDrive(m_leftCommand, m_rightCommand); // TANK DRIVE
 
-      m_myRobot.arcadeDrive(driveAdjust, aimAdjust); // ARCADE DRIVE
+    if (m_target) { // CHECK FOR TARGETS AND TARGET BUTTON PUSHED
+      m_myRobot.arcadeDrive(driveAdjust,aimAdjust);
+      // System.out.println("Moving");
     } else {
-      m_myRobot.tankDrive(-0.3, 0.3); // IF NO TARGETS, TURN UNTIL FOUND
+      m_myRobot.arcadeDrive(m_stick.getY(),m_stick.getX());
     }
+  }
+}
 
-		// DUKE COMMANDS
+// DUKE COMMANDS
     // boolean m_shootLow = m_stick.getRawButton(7);
     // boolean m_shootMed1 = m_stick.getRawButton(8);
     // boolean m_shootMed2 = m_stick.getRawButton(5);
@@ -127,9 +139,3 @@ public class Robot extends TimedRobot {
     // if (m_doKick) {
     //   m_kick.set(-0.5);
     // }
-    // m_myRobot.tankDrive(m_stick.getRawAxis(5), m_stick.getRawAxis(1));
-    // m_myRobot.tankDrive(0.5, 0.5);
-    //m_circle.whenPressed(new RunCommand(()->m_myRobot.tankDrive(0.25,-0.25)));
-
-  }
-}
