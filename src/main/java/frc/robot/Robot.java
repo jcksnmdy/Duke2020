@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Target Target", m_target);
 
     // USING ARCADE DRIVE
-		double driveAdjust = ty * -0.04; // FORWARD BACKWARD
+		double driveAdjust = ty * 0.1; // FORWARD BACKWARD
     double aimAdjust = tx * -0.04; // TURNING
     SmartDashboard.putNumber("aimAdjust", aimAdjust);
 
