@@ -81,27 +81,41 @@ public class Robot extends TimedRobot {
     // THE DISTANCE FROM THE CROSSHAIR OF THE CENTER OF THE TARGET: X
     double tx = m_limelight.getEntry("tx").getDouble(0);
     // THE DISTANCE FROM THE CROSSHAIR OF THE CENTER OF THE TARGET: Y
-    double ty = m_limelight.getEntry("ty").getDouble(0);
+    double ta = m_limelight.getEntry("ta").getDouble(0);
     // BOLLEAN, 0 or 1, IF THE LIMELIHGT SEES A TARGET
     double tv = m_limelight.getEntry("tv").getDouble(0);
 
     // Post to smart dashboard
     SmartDashboard.putNumber("Limelight X", tx);
-    SmartDashboard.putNumber("Limelight Y", ty);
+    SmartDashboard.putNumber("Limelight Area", ta);
     SmartDashboard.putNumber("Limelight Target", tv);
     SmartDashboard.putBoolean("Target Target", m_target);
 
     // USING ARCADE DRIVE
-		double driveAdjust = ty * 0.1; // FORWARD BACKWARD
-    double aimAdjust = tx * -0.04; // TURNING
+		double driveAdjust =  0; // FORWARD BACKWARD
+    double aimAdjust = tx * 0.05; // TURNING
     SmartDashboard.putNumber("aimAdjust", aimAdjust);
 
     // // USING TANK DRIVE
 		// m_rightCommand += 0.2*driveAdjust - aimAdjust;
     // m_leftCommand += 0.2*driveAdjust + aimAdjust;
 
-    if (m_target) { // CHECK FOR TARGETS AND TARGET BUTTON PUSHED
-      m_myRobot.arcadeDrive(driveAdjust,aimAdjust);
+    if (m_target && tv == 1) { // CHECK FOR TARGETS AND TARGET BUTTON PUSHED
+      // m_myRobot.arcadeDrive(driveAdjust,aimAdjust);
+      if (ta < 23){
+        // driveAdjust = 0.5;
+        m_myRobot.arcadeDrive(0.6,aimAdjust);
+      } else if (ta > 30) {
+          // driveAdjust = -0.35;
+          m_myRobot.arcadeDrive(-0.5,aimAdjust);
+      } else {
+         if (aimAdjust < 0.15 && aimAdjust > -0.15) {
+          m_myRobot.arcadeDrive(0.0,0.0);
+         } else {
+          m_myRobot.arcadeDrive(0.0,aimAdjust);
+         }
+       }
+      
       // System.out.println("Moving");
     } else {
       m_myRobot.arcadeDrive(m_stick.getY(),m_stick.getX());
